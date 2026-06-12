@@ -111,7 +111,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <h1>미디어 리뷰 아카이브</h1>
+  <div class="container">
+   <h1>미디어 리뷰 아카이브</h1>
 
   <div class="form-box">
     <h2>{{ editingId === null ? '리뷰 작성' : '리뷰 수정' }}</h2>
@@ -180,11 +181,12 @@ onMounted(() => {
         수정
       </button>
 
-      <button @click="deleteReview(review.id)">
+      <button class="delete-button" @click="deleteReview(review.id)">
         삭제
       </button>
     </div>
   </div>
+  </div>>
 </template>
 
 <style>
@@ -242,5 +244,44 @@ textarea {
   margin-bottom: 20px;
   padding: 12px;
   font-size: 16px;
+}
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 30px;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.form-box h2 {
+  text-align: center;
+}
+
+.review-card {
+  text-align: left;
+}
+
+.review-card h3 {
+  font-size: 24px;
+  margin-bottom: 12px;
+}
+
+button {
+  margin-right: 8px;
+  background-color: #eeeeee;
+}
+
+button:hover {
+  background-color: #dddddd;
+}
+.delete-button {
+  background-color: #ffdddd;
+}
+
+.delete-button:hover {
+  background-color: #ffbbbb;
 }
 </style>
