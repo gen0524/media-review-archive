@@ -5,6 +5,7 @@ import AppHeader from './components/AppHeader.vue'
 import AppFooter from './components/AppFooter.vue'
 import ReviewCard from './components/ReviewCard.vue'
 import ReviewForm from './components/ReviewForm.vue'
+import LoginBox from './components/LoginBox.vue'
 
 const reviews = ref([])
 const title = ref('')
@@ -117,6 +118,7 @@ onMounted(() => {
 <template>
   <div class="container">
     <AppHeader />
+    <LoginBox />
 
     <ReviewForm
         v-model:title="title"
