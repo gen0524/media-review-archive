@@ -7,6 +7,9 @@ const title = defineModel('title')
 const category = defineModel('category')
 const rating = defineModel('rating')
 const content = defineModel('content')
+const status = defineModel('status')
+const watchedDate = defineModel('watchedDate')
+const shortReview = defineModel('shortReview')
 
 defineEmits([
   'create',
@@ -30,6 +33,22 @@ defineEmits([
     </select>
 
     <input v-model="rating" type="number" min="1" max="5" />
+
+    <select v-model="status">
+      <option value="WANT_TO_WATCH">보고 싶음</option>
+      <option value="WATCHING">보는 중</option>
+      <option value="COMPLETED">감상 완료</option>
+    </select>
+
+    <input
+        v-model="watchedDate"
+        type="date"
+    />
+
+    <input
+        v-model="shortReview"
+        placeholder="한줄평 입력"
+    />
 
     <textarea v-model="content" placeholder="감상평 입력"></textarea>
 

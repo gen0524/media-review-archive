@@ -22,7 +22,10 @@ public class ReviewService {
                 request.getTitle(),
                 request.getCategory(),
                 request.getRating(),
-                request.getContent()
+                request.getContent(),
+                request.getStatus(),
+                request.getWatchedDate(),
+                request.getShortReview()
         );
 
         Review savedReview = reviewRepository.save(review);
@@ -52,7 +55,10 @@ public class ReviewService {
                 request.getTitle(),
                 request.getCategory(),
                 request.getRating(),
-                request.getContent()
+                request.getContent(),
+                request.getStatus(),
+                request.getWatchedDate(),
+                request.getShortReview()
         );
 
         return new ReviewResponse(review);

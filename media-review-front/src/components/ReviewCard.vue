@@ -20,6 +20,16 @@ const getCategoryLabel = (category) => {
 
   return labels[category] || category
 }
+
+const getStatusLabel = (status) => {
+  const labels = {
+    WANT_TO_WATCH: '보고 싶음',
+    WATCHING: '보는 중',
+    COMPLETED: '감상 완료'
+  }
+
+  return labels[status] || status
+}
 </script>
 
 <template>
@@ -37,7 +47,28 @@ const getCategoryLabel = (category) => {
       ({{ review.rating }}/5)
     </p>
 
+    <p>
+      <strong>감상 상태</strong>
+      {{ getStatusLabel(review.status) }}
+    </p>
+
+    <p v-if="review.watchedDate">
+      <strong>감상일</strong>
+      {{ review.watchedDate }}
+    </p>
+
+    <p v-if="review.shortReview">
+      <strong>한줄평</strong>
+      {{ review.shortReview }}
+    </p>
+
     <p>{{ review.content }}</p>
+
+    <RouterLink :to="`/reviews/${review.id}`">
+      <button>
+        상세보기
+      </button>
+    </RouterLink>
 
     <button @click="$emit('edit', review)">
       수정
