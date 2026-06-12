@@ -1,6 +1,10 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
+import AppHeader from './components/AppHeader.vue'
+import AppFooter from './components/AppFooter.vue'
+import ReviewCard from './components/ReviewCard.vue'
+import ReviewForm from './components/ReviewForm.vue'
 
 const reviews = ref([])
 const title = ref('')
@@ -112,14 +116,26 @@ onMounted(() => {
 
 <template>
   <div class="container">
-   <h1>미디어 리뷰 아카이브</h1>
+    <AppHeader />
 
-  <div class="form-box">
-    <h2>{{ editingId === null ? '리뷰 작성' : '리뷰 수정' }}</h2>
+    <ReviewForm
+        v-model:title="title"
+        v-model:category="category"
+        v-model:rating="rating"
+        v-model:content="content"
+        :editing-id="editingId"
+        @create="createReview"
+        @update="updateReview"
+    />
 
-    <input v-model="title" placeholder="제목 입력" />
+    <input
+        v-model="searchKeyword"
+        class="search-input"
+        placeholder="제목으로 검색"
+    />
 
-    <select v-model="category">
+    <select v-model="selectedCategory" class="filter-select">
+      <option value="ALL">전체</option>
       <option value="MOVIE">영화</option>
       <option value="DRAMA">드라마</option>
       <option value="ANIMATION">애니</option>
@@ -128,65 +144,18 @@ onMounted(() => {
       <option value="BOOK">책</option>
     </select>
 
-    <input v-model="rating" type="number" min="1" max="5" />
-
-    <textarea v-model="content" placeholder="감상평 입력"></textarea>
-
-    <button v-if="editingId === null" @click="createReview">
-      리뷰 등록
-    </button>
-
-    <button v-else @click="updateReview">
-      리뷰 수정
-    </button>
-  </div>
-
-  <input
-      v-model="searchKeyword"
-      class="search-input"
-      placeholder="제목으로 검색"
-  />
-  <select v-model="selectedCategory" class="filter-select">
-    <option value="ALL">전체</option>
-    <option value="MOVIE">영화</option>
-    <option value="DRAMA">드라마</option>
-    <option value="ANIMATION">애니</option>
-    <option value="TV_SHOW">예능</option>
-    <option value="YOUTUBE">유튜브</option>
-    <option value="BOOK">책</option>
-  </select>
-
-  <div class="review-list">
-    <div
-        class="review-card"
-        v-for="review in filteredReviews"
-        :key="review.id"
-    >
-      <h3>{{ review.title }}</h3>
-
-      <p>
-        <strong>카테고리</strong>
-        {{ getCategoryLabel(review.category) }}
-      </p>
-
-      <p>
-        <strong>별점</strong>
-        {{ '⭐'.repeat(review.rating) }}
-        ({{ review.rating }}/5)
-      </p>
-
-      <p>{{ review.content }}</p>
-
-      <button @click="startEdit(review)">
-        수정
-      </button>
-
-      <button class="delete-button" @click="deleteReview(review.id)">
-        삭제
-      </button>
+    <div class="review-list">
+      <ReviewCard
+          v-for="review in filteredReviews"
+          :key="review.id"
+          :review="review"
+          @edit="startEdit"
+          @delete="deleteReview"
+      />
     </div>
+
+    <AppFooter />
   </div>
-  </div>>
 </template>
 
 <style>
