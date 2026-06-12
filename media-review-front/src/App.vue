@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
 
 const reviews = ref([])
@@ -8,6 +8,7 @@ const category = ref('MOVIE')
 const rating = ref(5)
 const content = ref('')
 const editingId = ref(null)
+const searchKeyword = ref('')
 
 const loadReviews = async () => {
   try {
@@ -72,6 +73,13 @@ const updateReview = async () => {
 
   await loadReviews()
 }
+const filteredReviews = computed(() => {
+  return reviews.value.filter(review =>
+      review.title
+          .toLowerCase()
+          .includes(searchKeyword.value.toLowerCase())
+  )
+})
 
 onMounted(() => {
   loadReviews()
@@ -108,10 +116,16 @@ onMounted(() => {
     </button>
   </div>
 
+  <input
+      v-model="searchKeyword"
+      class="search-input"
+      placeholder="제목으로 검색"
+  />
+
   <div class="review-list">
     <div
         class="review-card"
-        v-for="review in reviews"
+        v-for="review in filteredReviews"
         :key="review.id"
     >
       <h3>{{ review.title }}</h3>
@@ -176,7 +190,6 @@ button {
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
-
 input,
 select,
 textarea {
@@ -185,5 +198,10 @@ textarea {
   margin-bottom: 10px;
   padding: 8px;
   box-sizing: border-box;
+}
+.search-input {
+  margin-bottom: 20px;
+  padding: 12px;
+  font-size: 16px;
 }
 </style>
