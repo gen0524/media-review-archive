@@ -170,7 +170,8 @@ onMounted(() => {
 
       <p>
         <strong>별점</strong>
-        ⭐ {{ review.rating }}
+        {{ '⭐'.repeat(review.rating) }}
+        ({{ review.rating }}/5)
       </p>
 
       <p>{{ review.content }}</p>
