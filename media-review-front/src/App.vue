@@ -9,6 +9,7 @@ const rating = ref(5)
 const content = ref('')
 const editingId = ref(null)
 const searchKeyword = ref('')
+const selectedCategory = ref('ALL')
 
 const loadReviews = async () => {
   try {
@@ -74,12 +75,35 @@ const updateReview = async () => {
   await loadReviews()
 }
 const filteredReviews = computed(() => {
-  return reviews.value.filter(review =>
-      review.title
-          .toLowerCase()
-          .includes(searchKeyword.value.toLowerCase())
-  )
+  return reviews.value.filter(review => {
+    const title = review.title || ''
+    const category = review.category || ''
+
+    const matchesKeyword = title
+        .toLowerCase()
+        .includes(searchKeyword.value.toLowerCase())
+
+    const matchesCategory =
+        selectedCategory.value === 'ALL' ||
+        category === selectedCategory.value ||
+        category === getCategoryLabel(selectedCategory.value)
+
+    return matchesKeyword && matchesCategory
+  })
 })
+
+const getCategoryLabel = (category) => {
+  const labels = {
+    MOVIE: '영화',
+    DRAMA: '드라마',
+    ANIMATION: '애니',
+    TV_SHOW: '예능',
+    YOUTUBE: '유튜브',
+    BOOK: '책'
+  }
+
+  return labels[category] || category
+}
 
 onMounted(() => {
   loadReviews()
@@ -121,6 +145,15 @@ onMounted(() => {
       class="search-input"
       placeholder="제목으로 검색"
   />
+  <select v-model="selectedCategory" class="filter-select">
+    <option value="ALL">전체</option>
+    <option value="MOVIE">영화</option>
+    <option value="DRAMA">드라마</option>
+    <option value="ANIMATION">애니</option>
+    <option value="TV_SHOW">예능</option>
+    <option value="YOUTUBE">유튜브</option>
+    <option value="BOOK">책</option>
+  </select>
 
   <div class="review-list">
     <div
@@ -132,7 +165,7 @@ onMounted(() => {
 
       <p>
         <strong>카테고리</strong>
-        {{ review.category }}
+        {{ getCategoryLabel(review.category) }}
       </p>
 
       <p>
@@ -200,6 +233,11 @@ textarea {
   box-sizing: border-box;
 }
 .search-input {
+  margin-bottom: 20px;
+  padding: 12px;
+  font-size: 16px;
+}
+.filter-select {
   margin-bottom: 20px;
   padding: 12px;
   font-size: 16px;
