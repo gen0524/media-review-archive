@@ -15,6 +15,7 @@ public class ReviewResponse {
     private String category;
     private Integer rating;
     private String content;
+    private String username;
 
     private ReviewStatus status;
     private LocalDate watchedDate;
@@ -29,6 +30,7 @@ public class ReviewResponse {
         this.category = review.getCategory();
         this.rating = review.getRating();
         this.content = review.getContent();
+        this.username = review.getUsername();
 
         this.status = review.getStatus();
         this.watchedDate = review.getWatchedDate();

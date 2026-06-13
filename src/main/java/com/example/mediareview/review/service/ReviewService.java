@@ -25,7 +25,8 @@ public class ReviewService {
                 request.getContent(),
                 request.getStatus(),
                 request.getWatchedDate(),
-                request.getShortReview()
+                request.getShortReview(),
+                request.getUsername()
         );
 
         Review savedReview = reviewRepository.save(review);

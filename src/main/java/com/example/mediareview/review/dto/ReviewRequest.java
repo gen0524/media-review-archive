@@ -14,6 +14,7 @@ public class ReviewRequest {
     private String category;
     private Integer rating;
     private String content;
+    private String username;
 
     private ReviewStatus status;    // WANT_TO_WATCH, WATCHING, COMPLETED
     private LocalDate watchedDate;  // 감상일

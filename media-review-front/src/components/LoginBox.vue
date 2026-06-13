@@ -1,18 +1,48 @@
 <script setup>
 import { ref } from 'vue'
 import { useUserStore } from '../stores/userStore'
+import axios from 'axios'
 
 const userStore = useUserStore()
 const inputName = ref('')
+const password = ref('')
 
-const login = () => {
-  if (inputName.value.trim() === '') {
-    alert('사용자 이름을 입력하세요.')
-    return
+const register = async () => {
+  try {
+    await axios.post(
+        'http://localhost:8080/api/users/register',
+        {
+          username: inputName.value,
+          password: password.value
+        }
+    )
+
+    alert('회원가입 성공')
+  } catch (error) {
+    alert('회원가입 실패')
+    console.error(error)
   }
+}
 
-  userStore.setUser(inputName.value)
-  inputName.value = ''
+const login = async () => {
+  try {
+    const response = await axios.post(
+        'http://localhost:8080/api/users/login',
+        {
+          username: inputName.value,
+          password: password.value
+        }
+    )
+
+    userStore.setUser(response.data.username)
+
+    inputName.value = ''
+    password.value = ''
+
+  } catch (error) {
+    alert('로그인 실패')
+    console.error(error)
+  }
 }
 
 const logout = () => {
@@ -25,8 +55,18 @@ const logout = () => {
     <template v-if="userStore.username === 'guest'">
       <input
           v-model="inputName"
-          placeholder="사용자 이름 입력"
+          placeholder="사용자 이름"
       />
+
+      <input
+          v-model="password"
+          type="password"
+          placeholder="비밀번호"
+      />
+
+      <button @click="register">
+        회원가입
+      </button>
 
       <button @click="login">
         로그인

@@ -6,6 +6,7 @@ import AppFooter from '../components/AppFooter.vue'
 import ReviewForm from '../components/ReviewForm.vue'
 import ReviewCard from '../components/ReviewCard.vue'
 import LoginBox from '../components/LoginBox.vue'
+import { useUserStore } from '../stores/userStore'
 
 const reviews = ref([])
 
@@ -16,10 +17,13 @@ const content = ref('')
 const status = ref('COMPLETED')
 const watchedDate = ref('')
 const shortReview = ref('')
+const userStore = useUserStore()
 
 const editingId = ref(null)
 const searchKeyword = ref('')
 const selectedCategory = ref('ALL')
+const selectedSort = ref('LATEST')
+const selectedStatus = ref('ALL')
 
 const resetForm = () => {
   editingId.value = null
@@ -49,7 +53,8 @@ const createReview = async () => {
     content: content.value,
     status: status.value,
     watchedDate: watchedDate.value || null,
-    shortReview: shortReview.value
+    shortReview: shortReview.value,
+    username: userStore.username
   })
 
   resetForm()
@@ -94,7 +99,7 @@ const updateReview = async () => {
 }
 
 const filteredReviews = computed(() => {
-  return reviews.value.filter(review => {
+  const filtered = reviews.value.filter(review => {
     const title = review.title || ''
     const category = review.category || ''
 
@@ -107,9 +112,56 @@ const filteredReviews = computed(() => {
         category === selectedCategory.value ||
         category === getCategoryLabel(selectedCategory.value)
 
-    return matchesKeyword && matchesCategory
+    const matchesStatus =
+        selectedStatus.value === 'ALL' ||
+        review.status === selectedStatus.value
+
+    return matchesKeyword && matchesCategory && matchesStatus
+  })
+
+  return filtered.sort((a, b) => {
+    if (selectedSort.value === 'RATING_DESC') {
+      return b.rating - a.rating
+    }
+
+    if (selectedSort.value === 'RATING_ASC') {
+      return a.rating - b.rating
+    }
+
+    return new Date(b.createdAt) - new Date(a.createdAt)
   })
 })
+
+const totalReviews = computed(() => reviews.value.length)
+
+const averageRating = computed(() => {
+  if (reviews.value.length === 0) return 0
+
+  const sum = reviews.value.reduce(
+      (acc, review) => acc + review.rating,
+      0
+  )
+
+  return (sum / reviews.value.length).toFixed(1)
+})
+
+const completedCount = computed(() =>
+    reviews.value.filter(
+        review => review.status === 'COMPLETED'
+    ).length
+)
+
+const watchingCount = computed(() =>
+    reviews.value.filter(
+        review => review.status === 'WATCHING'
+    ).length
+)
+
+const wantToWatchCount = computed(() =>
+    reviews.value.filter(
+        review => review.status === 'WANT_TO_WATCH'
+    ).length
+)
 
 const getCategoryLabel = (category) => {
   const labels = {
@@ -133,6 +185,28 @@ onMounted(() => {
   <div class="container">
     <AppHeader />
     <LoginBox />
+
+    <RouterLink to="/want-to-watch">
+      <button>보고 싶은 목록</button>
+    </RouterLink>
+
+    <RouterLink to="/completed">
+      <button>감상 완료 목록</button>
+    </RouterLink>
+
+    <div class="stats-box">
+      <h2>리뷰 통계</h2>
+
+      <p>총 리뷰 수 : {{ totalReviews }}개</p>
+
+      <p>평균 별점 : {{ averageRating }}점</p>
+
+      <p>감상 완료 : {{ completedCount }}개</p>
+
+      <p>보는 중 : {{ watchingCount }}개</p>
+
+      <p>보고 싶음 : {{ wantToWatchCount }}개</p>
+    </div>
 
     <ReviewForm
         v-model:title="title"
@@ -161,6 +235,19 @@ onMounted(() => {
       <option value="TV_SHOW">예능</option>
       <option value="YOUTUBE">유튜브</option>
       <option value="BOOK">책</option>
+    </select>
+
+    <select v-model="selectedStatus" class="filter-select">
+      <option value="ALL">전체 상태</option>
+      <option value="WANT_TO_WATCH">보고 싶음</option>
+      <option value="WATCHING">보는 중</option>
+      <option value="COMPLETED">감상 완료</option>
+    </select>
+
+    <select v-model="selectedSort" class="filter-select">
+      <option value="LATEST">최신순</option>
+      <option value="RATING_DESC">별점 높은순</option>
+      <option value="RATING_ASC">별점 낮은순</option>
     </select>
 
     <div class="review-list">
@@ -272,4 +359,12 @@ button:hover {
 .delete-button:hover {
   background-color: #ffbbbb;
 }
+.stats-box {
+  background: white;
+  padding: 16px;
+  margin-bottom: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
 </style>

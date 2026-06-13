@@ -34,6 +34,9 @@ public class Review {
     @Column(nullable = false)
     private ReviewStatus status;
 
+    @Column(nullable = false)
+    private String username;
+
     private LocalDate watchedDate;
 
     private String shortReview;
@@ -48,7 +51,8 @@ public class Review {
             String content,
             ReviewStatus status,
             LocalDate watchedDate,
-            String shortReview
+            String shortReview,
+            String username
     ) {
         this.title = title;
         this.category = category;
@@ -57,6 +61,7 @@ public class Review {
         this.status = status;
         this.watchedDate = watchedDate;
         this.shortReview = shortReview;
+        this.username = username;
     }
 
     @PrePersist

@@ -62,6 +62,11 @@ onMounted(() => {
       <h1>{{ review.title }}</h1>
 
       <p>
+        <strong>작성자</strong>
+        {{ review.username }}
+      </p>
+
+      <p>
         <strong>카테고리</strong>
         {{ getCategoryLabel(review.category) }}
       </p>

@@ -37,6 +37,11 @@ const getStatusLabel = (status) => {
     <h3>{{ review.title }}</h3>
 
     <p>
+      <strong>작성자</strong>
+      {{ review.username }}
+    </p>
+
+    <p>
       <strong>카테고리</strong>
       {{ getCategoryLabel(review.category) }}
     </p>
